@@ -16,7 +16,7 @@ const (
 	Max
 )
 
-func send(text string, url string, priority Priority, md bool, title string, tags []string) {
+func _send(text string, url string, priority Priority, md bool, title string, tags []string) {
 	req, _ := http.NewRequest("POST", url, strings.NewReader(text))
 	req.Header.Set("Content-Type", "text/plain")
 	if md {
@@ -37,11 +37,11 @@ func NewClient(url string, tag *string) *Client {
 	return &Client{url, tag}
 }
 
-func (c *Client) Send(text ...string) {
+func (c *Client) send(text string, priority Priority, md bool, title string, tags []string) {
 	if c.tag != nil {
-		text = []string{*c.tag, strings.Join(text, " ")}
+		text = *c.tag + " " + text
 	}
-	send(strings.Join(text, " "), c.url, Default, false, "", nil)
+	_send(text, c.url, priority, md, title, tags)
 }
 
 type Message struct {
@@ -53,7 +53,7 @@ type Message struct {
 }
 
 func (c *Client) SendMessage(message Message) {
-	send(message.Text, c.url, message.Priority, message.Markdown, message.Title, message.Tags)
+	c.send(message.Text, message.Priority, message.Markdown, message.Title, message.Tags)
 }
 
 func (c *Client) SendError(message string, stack string) {
