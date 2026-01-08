@@ -38,6 +38,9 @@ func NewClient(url string, tag *string) *Client {
 }
 
 func (c *Client) send(text string, priority Priority, md bool, title string, tags []string) {
+	if c == nil {
+		return
+	}
 	if c.tag != nil {
 		text = *c.tag + " " + text
 	}
